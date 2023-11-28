@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Pesquisa de endereço</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+
+        <input type="text" name="cep" id="cep">
+        <button type="button" id="pesquisarCEP">Pesquisar CEP</button>
+        
+        <span id="loading" style="display:none;">[Carregando...]</span>
+
+        <hr>
+        
+        <section class="nomes">
+            Logradouro: <strong><span id="logradouro"></span></strong><br/>
+            Bairro: <strong><span id="bairro"></span></strong><br/>
+            Localidade: <strong><span id="localidade"></span></strong><br/>
+            Uf: <strong><span id="uf"></span></strong><br/>
+        </section>
+        
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script>
+            $("#pesquisarCEP").on("click", function(){
+
+                var loading = $("#loading");
+                var cep = $("#cep").val().replace(/[^0-9]/g,'');
+
+                loading.show();
+                if(cep !== "" && cep.length == 8){
+
+                    $.ajax({
+                        url: "https://viacep.com.br/ws/"+cep+"/json/",
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+
+                            if(data.erro !== undefined){
+                                alert("CEP inválido ou não encontrado");
+                            }else{
+                        
+                                $("#logradouro").text(data.logradouro);
+                                $("#bairro").text(data.bairro);
+                                $("#localidade").text(data.localidade);
+                                $("#uf").text(data.uf);
+                            }
+                        },
+                        error: function(data){
+                            alert("Algum erro ocorreu, consulte o log.");
+                        },
+                        complete: function(){
+                            loading.hide();
+                        }
+                    });
+
+                }else{
+                    alert("CEP deve conter 8 digitos");
+                }
+            });
+        </script>
+    </body>
+</html>
